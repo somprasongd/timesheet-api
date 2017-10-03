@@ -1,37 +1,31 @@
 const Sequelize = require('sequelize')
 const {db: sequelize} = require('../../config')
 
-const User = sequelize.define('user', {
+const User = sequelize.define('timelog', {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  username: {
-    type: Sequelize.STRING, 
+  userId: {
+    type: Sequelize.INTEGER, 
     allowNull: false, 
-    unique: true
+    unique: true,
+    field: 'user_id'
   },
-  password: {
-    type: Sequelize.STRING, 
+  timestamp: {
+    type: Sequelize.DATE, 
     allowNull: false
   },
-  isAdmin: {
-    type: Sequelize.BOOLEAN, 
-    allowNull: false,
-    field: 'is_admin'
+  type: {
+    type: Sequelize.INTEGER, 
+    allowNull: false
   }
 });
 
 // force: true will drop the table if it already exists
 User.sync({force: true}).then(() => {
-  console.log('created users')
-  // Table created
-  return User.create({
-    username: 'admin',
-    password: '1234',
-    isAdmin: true
-  });
+  console.log('created timelogs')
 });
 
 User.Instance.prototype.hashPassword = function (password) {
