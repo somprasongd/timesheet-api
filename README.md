@@ -8,6 +8,10 @@ PG_CONNECTION=postgres://postgres:postgres@127.0.0.1:5432/timesheet
 SECRET_KEY=my_secret_key
 ```
 
+## สร้างฐานข้อมูล
+
+สร้างฐานข้อมูลชื่อ timesheet
+
 ## end point
 
 - Login
@@ -35,7 +39,8 @@ POST localhost:8080/checkout
 
 Header: {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE1MDcwODUyOTgsImV4cCI6MTUwNzA4ODg5OH0.4vwnZAfLglBzTiU-7tN1TLo5spaxhr0vxjr5F7GsK-g"}
 
-- History
+- History (ยังไม่ได้เชค authen)
 
 GET localhost:8080/history --> แสดงทั้งหมด
+
 GET localhost:8080/history/id --> แสดงของแต่ละคน
