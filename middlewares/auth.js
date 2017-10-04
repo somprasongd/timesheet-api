@@ -4,12 +4,17 @@ const config = require('../config')
 module.exports = function(req, res, next) {
     const authHeader = req.header('Authorization')
 
-    if(!authHeader) return next()
-
+    if(!authHeader) {
+        res.status(401).json({error: 'unauthorized no header'})
+        return
+    }
     const accessToken = authHeader.match(/Bearer (.*)/)[1]
 
-    jwt.verify(accessToken, config.secret, (err, decoded) => {
-        if(err) return next();
+    jwt.verify(accessToken, config.secretKey, (err, decoded) => {
+        if(err){
+            res.status(401).json({error: 'unauthorized unvalid token'})
+            return
+        }
 
         req.auth = decoded
         next()
