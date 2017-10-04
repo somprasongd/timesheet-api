@@ -4,5 +4,5 @@ module.exports = {
     port: process.env.PORT || 3000, // ถ้าไม่ระบุใน env ให้ใช้ port 3000 แทน
     debug: process.env.NODE_ENV === 'development',
     pgConnection: process.env.PG_CONNECTION,
-    secretKey: process.env.SECRET
+    secretKey: process.env.SECRET_KEY
 }

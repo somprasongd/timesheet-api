@@ -1,59 +1,19 @@
-const UserModel = require('./model')
-const UserSerializer = require('./serializer');
+const TimelogModel = require('./model')
+const TimelogSerializer = require('./serializer');
 
-const UserController = {
-    async getAll(req, res) {
+const TimelogController = {
+    async create(userId, type = 1) {
         try{
-            const users = await UserModel.findAll({
-              attributes: ['id', 'username', 'isAdmin']
-            })
-            return users
-        }catch(err){
-            return err
-        }
-        
-    },
-    async get(id) {
-      try{
-        const user = await UserModel.findById(+id, {
-          attributes: ['id', 'username', 'isAdmin']
-        })
-        return user
-      }catch(err){
-          return err
-      }
-    }, 
-    async create(username, password, isAdmin = false) {
-        try{
-            password = await UserModel.hashPassword(password)
-            const newUser = new UserModel({username, password, isAdmin})
-            const user = await newUser.save()
-            return {
-                user: UserSerializer.for('create', user),
-                accessToken: user.genToken()
-            }
-        }catch(err){
-            return err
-        }
-    }, 
-    async update(id, username, password) {
-        try{            
-            const user = await UserModel.findById(+id)
-            if(!user) {
-                 return
-            }else{
-                user.username = username
-                user.password = password
-                const updatedUser = await user.save()
-                return {user: UserSerializer.for('update', updatedUser)}
-            }            
+            const newTimelog = new TimelogModel({userId, type})
+            const timelog = await newTimelog.save()
+            return {timelog: TimelogSerializer.for('create', timelog)}
         }catch(err){
             return err
         }
     },
     async destroy(id) {
         try{            
-            await UserModel.findByIdAndRemove(+id)
+            await TimelogModel.findByIdAndRemove(+id)
             return true
         }catch(err){
             return err
@@ -61,4 +21,4 @@ const UserController = {
     }
 }
 
-module.exports = UserController;
+module.exports = TimelogController;

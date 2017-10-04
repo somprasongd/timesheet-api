@@ -2,7 +2,7 @@ const UserModel = require('./model')
 const UserSerializer = require('./serializer');
 
 const UserController = {
-    async getAll(req, res) {
+    async getAll() {
         try{
             const users = await UserModel.findAll({
               attributes: ['id', 'username', 'isAdmin']
@@ -25,14 +25,18 @@ const UserController = {
     }, 
     async create(username, password, isAdmin = false) {
         try{
+            console.log('new user')
             password = await UserModel.hashPassword(password)
+            console.log('password', password)
             const newUser = new UserModel({username, password, isAdmin})
+            
             const user = await newUser.save()
             return {
                 user: UserSerializer.for('create', user),
                 accessToken: user.genToken()
             }
         }catch(err){
+            console.log('err', err)
             return err
         }
     }, 

@@ -1,5 +1,7 @@
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const Sequelize = require('sequelize')
-const {db: sequelize} = require('../../config')
+const {db: sequelize, secretKey: secret} = require('../../config')
 
 const User = sequelize.define('user', {
   id: {
@@ -21,20 +23,9 @@ const User = sequelize.define('user', {
     allowNull: false,
     field: 'is_admin'
   }
-});
+})
 
-// force: true will drop the table if it already exists
-User.sync({force: true}).then(() => {
-  console.log('created users')
-  // Table created
-  return User.create({
-    username: 'admin',
-    password: '1234',
-    isAdmin: true
-  });
-});
-
-User.Instance.prototype.hashPassword = function (password) {
+User.hashPassword = function (password) {
   return new Promise((resolve, reject) => {
       const saltRound = 10; // คือจำนวนรอบในการทำงานผ่านอัลกอริทึมใน bcrypt 10 = 2 ยกกำลัง 10 รอบ
       bcrypt.hash(password, saltRound, (err, hash) => {
@@ -43,11 +34,10 @@ User.Instance.prototype.hashPassword = function (password) {
           }else{
               resolve(hash);
           }            
-      });
-  });
-};
-
-User.Instance.prototype.authenticate = function (password) {
+      })
+  })
+}
+User.prototype.authenticate = function (password) {
   return new Promise((resolve, reject) => {
       const hash = this.password;
       bcrypt.compare(password, hash, (err, isValid) => {
@@ -57,15 +47,29 @@ User.Instance.prototype.authenticate = function (password) {
               resolve(isValid);
           }
       })
-  });
-};
-
-User.Instance.prototype.genToken = function () {
+  })
+}
+User.prototype.genToken = function () {
   return jwt.sign({
       sub: this.id,
       username: this.username,
       isAdmin: this.isAdmin
-  }, config.secret, { expiresIn: '1h' });
-};
+  }, secret, { expiresIn: '1h' });
+}
+
+
+// force: true will drop the table if it already exists
+User.sync({force: true})
+.then(() => {
+  return User.hashPassword('1234')
+})
+.then(password => {
+  // Table created
+  return User.create({
+    username: 'admin',
+    password: password,
+    isAdmin: true
+  })
+})
 
 module.exports = User

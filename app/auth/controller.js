@@ -4,7 +4,7 @@ const UserSerializer = require('./serializer')
 const Controller = {     
     async login(username, password) {
         try{
-            const user = await UserModel.findOne({'username': username})
+            const user = await UserModel.findOne({where: {'username': username}})
             const isValid = await user.authenticate(password)
             if (isValid) {
                 return { 
